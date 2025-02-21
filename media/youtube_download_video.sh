@@ -22,18 +22,24 @@ srcdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # shellcheck disable=SC2034,SC2154
 usage_description="
-Downloads a YouTube video to mp4 with maximum quality and compatibility using yt-dlp
+Downloads a YouTube, Facebook or Twitter / X video to mp4 with maximum quality and compatibility using yt-dlp
+
+Opens the video automatically for you to check the download
 
 Installs yt-dlp (for downloading) and ffmpeg (for conversions) via OS package manager if not already installed
 "
 
 # used by usage() in lib/utils.sh
 # shellcheck disable=SC2034
-usage_args="<youtube_video_url>"
+usage_args="<video_url> [<filename>.mp4]"
 
 help_usage "$@"
 
 min_args 1 "$@"
+max_args 2 "$@"
+
+url="$1"
+filename="${2:-%(title)s}.%(ext)s"
 
 #"$srcdir/../packages/install_packages_if_absent.sh" yt-dlp ffmpeg
 
@@ -66,11 +72,35 @@ done
 #       /best: falls back to the best single file if the video+audio combination isn't available
 #
 # for maximum compatibility specify compatible formats
+#
+#    --output "%(title)s.%(ext)s" \
+#
 yt-dlp \
     --format "bestvideo[ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[ext=mp4]" \
     --merge-output-format mp4 \
     --continue \
     --no-overwrite \
-    --output "%(title)s.%(ext)s" \
+    --output "$filename" \
     ${DEBUG:+--verbose} \
-    "$1"
+    "$url"
+
+if [ "${2:-}" ]; then
+    filename="$2.mp4"
+else
+    # if the filename isn't specified, we can infer it since no filename specified means no path specified so
+    # we can infer it to be the most recent file with an mp4 extension in $PWD
+    # shellcheck disable=SC2012
+    # this doesn't work reliably, the timestamp of a newer downloaded video file can be older, resulting in opening
+    # the wrong video
+    #"$srcdir/vidopen.sh" "$(ls -t ./*.mp4 | head -n1)"
+    timestamp "Determining download filename"
+    filename="$(yt-dlp --get-filename --output "%(title)s.mp4" "$url")"
+fi
+timestamp "Touching file timestamp to make it easier to find when browsing"
+touch "$filename"
+timestamp "Opening video file: $filename"
+#if is_mac; then
+#    timestamp "Showing in Finder"
+#    open -R "$filename"
+#fi
+"$srcdir/vidopen.sh" "$filename"

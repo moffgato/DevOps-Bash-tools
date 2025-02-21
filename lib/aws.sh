@@ -32,11 +32,14 @@ usage_aws_cli_jq_required="Requires AWS CLI to be installed and configured, as w
 #   awk '{ if (length < min || NR == 1) min = length } END { print min }'
 #
 aws_ecr_regex='[[:digit:]]{12}.dkr.ecr.[[:alnum:]-]{9,}.amazonaws.com'
+aws_account_id_regex='[[:digit:]]{12}'
 aws_region_regex='[a-z]{2}-[a-z]+-[[:digit:]]'
 instance_id_regex='i-[0-9a-fA-F]{17}'
 ami_id_regex='ami-[0-9a-fA-F]{8}([0-9a-fA-F]{9})?'
 # S3 URL regex with s3:// prefix
 s3_regex='s3:\/\/([a-z0-9][a-z0-9.-]{1,61}[a-z0-9])\/(.+)$|^s3:\/\/([a-z0-9][a-z0-9.-]{1,61}[a-z0-9])\/([a-z0-9][a-z0-9.-]{1,61}[a-z0-9])\/(.+)'
+aws_sg_regex="sg-[0-9a-f]{8,17}"
+aws_subnet_regex="subnet-[0-9a-f]{8,17}"
 
 is_aws_sso_logged_in(){
     aws sts get-caller-identity &>/dev/null
@@ -300,6 +303,11 @@ aws_region_from_env(){
     echo "$region"
 }
 
+is_aws_account_id(){
+    local arg="$1"
+    [[ "$arg" =~ ^$aws_account_id_regex$ ]]
+}
+
 is_aws_region(){
     local arg="$1"
     [[ "$arg" =~ ^$aws_region_regex$ ]]
@@ -317,6 +325,44 @@ is_instance_id(){
 is_ami_id(){
     local arg="$1"
     [[ "$arg" =~ ^$ami_id_regex$ ]]
+}
+
+aws_validate_ami_id() {
+    local arg="$1"
+    if ! is_instance_id "$arg"; then
+        die "Invalid EC2 AMI ID: $arg"
+    fi
+}
+
+aws_validate_instance_id() {
+    local arg="$1"
+    if ! is_instance_id "$arg"; then
+        die "Invalid EC2 Instance ID: $arg"
+    fi
+}
+
+aws_validate_security_group_id() {
+    local arg="$1"
+    if ! is_aws_security_group_id "$arg"; then
+        die "Invalid Security Group ID: $arg"
+    fi
+}
+
+is_aws_security_group_id() {
+    local arg="$1"
+    [[ "$arg" =~ ^$aws_sg_regex$ ]]
+}
+
+aws_validate_subnet_id() {
+    local arg="$1"
+    if ! is_aws_subnet_id "$arg"; then
+        die "Invalid Subnet ID: $arg"
+    fi
+}
+
+is_aws_subnet_id() {
+    local arg="$1"
+    [[ "$arg" =~ ^$aws_subnet_regex$ ]]
 }
 
 #aws_get_cred_path(){

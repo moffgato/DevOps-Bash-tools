@@ -24,6 +24,8 @@ srcdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 usage_description="
 Converts a Webp image to PNG to be usable on websites that don't support Webp images like Medium
 
+Opens the converted PNG image to verify it
+
 Requires either ImageMagick or dwebp to be installed, attempts to them in this order if not found
 "
 
@@ -90,3 +92,6 @@ if [ "$converted" = 1 ]; then
 else
     die "Conversion failed"
 fi
+
+timestamp "Opening image: $png"
+"$srcdir/imageopen.sh" "$png"

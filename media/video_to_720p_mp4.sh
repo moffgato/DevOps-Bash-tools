@@ -30,6 +30,8 @@ Names the generated files the same except with the file extension replaced with 
 
 Skips files which already have a corresponding adjacent '.720.mp4' file for safety
 
+Will fail if given a video that is already below that resolution
+
 Removes partially complete files for consistency using bash trapping
 
 Installs ffmpeg using OS package manager if not already installed
@@ -66,6 +68,7 @@ for filepath in "$@"; do
         time nice ffmpeg -i "$filepath" -vf "scale=-1:720" -c:v libx264 -crf 23 -preset medium -c:a copy -movflags +faststart "$mp4_filepath"
         echo >&2
     fi
+    "$srcdir/vidopen.sh" "$mp4_filepath"
 done
 
 echo >&2

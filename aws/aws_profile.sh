@@ -22,24 +22,34 @@ srcdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # shellcheck disable=SC2034,SC2154
 usage_description="
-Switches to an AWS Profile given as an arg or prompts the user with a convenient interactive menu
-list of AWS profiles to choose from
+Switches to an AWS Profile selected from a convenient interactive menu list of AWS profiles to choose from
 
-If no profile name is given then Parses \$AWS_CONFIG_FILE or \$HOME/.aws/config for the profile list
-and prompts the user with a dialog menu
+Parses \$AWS_CONFIG_FILE or \$HOME/.aws/config for the menu list
+
+Skips the menu if there is only 1 AWS profile found in the config
 
 Then sets the AWS_PROFILE and exec's to \$SHELL to inherit it
 
 Convenient when you have lots of work AWS profiles
+
+
+Requires dialogue menu CLI tool to be installed - attempts to install it via OS package manager if not already found
 "
 
 # used by usage() in lib/utils.sh
 # shellcheck disable=SC2034
-usage_args="[<profile>]"
+usage_args="[<aws_config_path>]"
 
 help_usage "$@"
 
 max_args 1 "$@"
+
+if ! type -P dialog &>/dev/null; then
+    timestamp "Diaglog not found in \$PATH, attempting to install via OS package manager"
+    echo
+    "$srcdir/../packages/install_packages.sh" dialog
+    echo
+fi
 
 [ -n "${HOME:-}" ] || HOME=~
 
@@ -81,10 +91,26 @@ profiles="$(sed -n 's/^[[:space:]]*\[\(profile[[:space:]][[:space:]]*\)*\(.*\)\]
 profile_menu_items=()
 
 while read -r line; do
-    profile_menu_items+=("$line" " ")
+
+    # used for counting and string conversion if only a single item
+
+    profile_menu_items+=("$line")
+
+    # passed to dialog because it requires args: tag1 visibletext tag2 visibletext
+    # - by making the second one blank it uses the item as both the tag to be returned
+    # to script as well as the visible text
+
+    profile_menu_tag_items+=("$line" " ")
+
 done <<< "$profiles"
 
-profile="$(dialog --menu "Choose which AWS profile to switch to:" "$LINES" "$COLUMNS" "$LINES" "${profile_menu_items[@]}" 3>&1 1>&2 2>&3)"
+if [ "${#profile_menu_items[@]}" -eq 0 ];then
+    die 'No AWS Profiles found!'
+elif [ "${#profile_menu_items[@]}" -eq 1 ];then
+    profile="${profile_menu_items[*]}"
+else
+    profile="$(dialog --menu "Choose which AWS profile to switch to:" "$LINES" "$COLUMNS" "$LINES" "${profile_menu_tag_items[@]}" 3>&1 1>&2 2>&3)"
+fi
 
 aws_profile "$profile"
 

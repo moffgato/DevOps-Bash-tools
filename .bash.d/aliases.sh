@@ -92,6 +92,7 @@ alias grep='grep --color=auto'
 alias dec="decomment.sh"
 
 alias hosts='sudo $EDITOR /etc/hosts'
+alias repos='$EDITOR $bash_tools/setup/repos.txt'
 
 alias path="echo \$PATH | tr ':' '\\n' | less"
 alias paths=path
@@ -120,6 +121,8 @@ alias newshell='exec bash'
 alias rr='newshell'
 
 alias record=script
+
+alias dl=youtube_download_video.sh
 
 alias l33tmode='welcome; retmode=on; echo l33tm0de on'
 alias leetmode=l33tmode

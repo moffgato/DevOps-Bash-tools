@@ -42,6 +42,7 @@ amazon-ecs-cli
 #amazon-sam-cli  # no longer found
 ansible
 ansible-lint
+aria2  # optionally used by xcodes for downloading, supports resuming and segmented downloading
 archey4  # displays system info in text
 argocd
 asciinema  # records terminal to asciicast
@@ -106,11 +107,14 @@ etcd
 exiftool  # view image metadata
 exiv2     # view image metadata
 #ext4fuse  # to read Linux partitions eg. on external hard drives
+fastlane  # for Mobile CI/CD development
 ffmpeg
 #filezilla  # GUI ftp client - not found
+firebase-cli
 fish
 flyscrape
 fortune
+fping  # scriptable fast ping for multiple hosts
 fswatch
 fzf
 gcc
@@ -138,6 +142,7 @@ haproxy
 helm
 hexyl  # hex command line viewer - https://github.com/sharkdp/hexyl
 htop
+httping  # ping-like tool for HTTP requests
 http-toolkit  # HTTP intercepting debugger
 hub
 hugo  # static website generator - https://gohugo.io/getting-started/quick-start/
@@ -148,6 +153,7 @@ imagemagick
 #inetutils  # GNU telnet, ftp, tftp, inetd, syslog, ping, traceroute, whois - prefixed with g
 infracost  # Cloud cost estimator for Terraform code
 ipcalc
+ioping  # monitor I/O latency in real-time
 iperf
 ipython
 #isc-dhcp  # the classic DHCP daemon, use for bootstrapping PXE installing Debian Linux or similar as per https://github.com/HariSekhon/Knowledge-Base/blob/main/dhcp.md
@@ -259,6 +265,7 @@ ruby-completion
 screen  # get newer version for -Q switch, will use different sockets directory
 s3cmd
 scalastyle
+scc  # Succinct Code Counter - lines and Cocomo man effort estimate
 semgrep
 siege
 #six  # Python 2 to 3 conversion
@@ -279,6 +286,7 @@ ssh-copy-id
 stats  # fancier Activity Monitor
 #steghide  # looks like it's been removed
 #subversion  # pulls in brew version of Perl which breaks library installations due to this horror - https://github.com/toddr/IO-Tty/issues/25
+tcpping  # ping-like tool for TCP requests
 #terraform  # use tfenv with direnv to match your company's version and avoid accidentally upgrading the tfstate
 #terragrunt  # old, use install/install_terragrunt.sh to grab latest version to ~/bin instead
 #terraformer  # large, install only if actively using
@@ -305,9 +313,11 @@ watch
 watchexec  # run commands when files change
 #wget  # in brew-packages.txt
 #whois  # in brew-packages.txt
+#windows-app  # replaces microsoft-remote-desktop
 wireshark  # only install tshark CLI, must --cask for Wireshark
 #webp
 xclip
+xcodesorg/made/xcodes
 #x264
 #x265
 #xvid

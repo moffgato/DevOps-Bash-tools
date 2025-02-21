@@ -20,7 +20,7 @@
 ---
 name: Trivy Docker Image Scan
 
-on:
+on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master
@@ -43,10 +43,12 @@ on:
     - cron: '0 0 * * 1'
 
 permissions:
+  actions: read
   contents: read
+  security-events: write
 
 concurrency:
-  group: ${{ github.ref }}-${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -55,7 +57,7 @@ jobs:
     #if: github.event.repository.fork == false
     if: github.repository_owner == 'HariSekhon'
     name: Trivy Docker Image Scan
-    uses: HariSekhon/GitHub-Actions/.github/workflows/trivy.yaml@master
+    uses: HariSekhon/GitHub-Actions/.github/workflows/trivy_image.yaml@master
     with:
-      docker_image: harisekhon/bash-tools
+      image: harisekhon/bash-tools
       severity: ''

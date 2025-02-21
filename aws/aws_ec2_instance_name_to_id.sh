@@ -32,11 +32,13 @@ Adds additional safety checks:
 
 Called by adjacent scripts like:
 
-    aws_ec2_create_ami_from_instance.sh
+    aws_ec2_ami_create_from_instance.sh
 
-    aws_ec2_terminate_instance_by_name.sh
+    aws_ec2_instance_terminate_by_name.sh
 
-Investigate instance names and IDs quickly using adjacent script aws_ec2_instances.sh
+Investigate instance names and IDs quickly using adjacent script:
+
+    aws_ec2_instances.sh
 
 
 $usage_aws_cli_required
@@ -75,7 +77,7 @@ if [ "$(awk '{print NF}' <<< "$instance_id")" -gt 1 ]; then
     cat >&2 <<EOF
 More than 1 instance ID returned, aborting for safety!"
 
-Instance ID found:
+Instance IDs found:
 
 $instance_id
 EOF

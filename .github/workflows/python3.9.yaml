@@ -14,7 +14,7 @@
 ---
 name: Python 3.9
 
-on:
+on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master
@@ -46,7 +46,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.ref }}-${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

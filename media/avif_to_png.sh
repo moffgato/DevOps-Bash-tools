@@ -24,6 +24,8 @@ srcdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 usage_description="
 Converts a Avif image to PNG to be usable on websites that don't support Avif images like LinkedIn
 
+Opens the converted PNG image to verify it
+
 Requires ImageMagick to be installed, attempts to install it if not found
 "
 
@@ -74,6 +76,10 @@ else
     #"$srcdir/../packages/install_packages.sh" anothertool ||
     die "Failed to install ImageMagick to convert Avif to PNG"
 
+    if is_mac; then
+        "$srcdir/../packages/install_package_if_absent.sh" libheif
+    fi
+
     if convert; then
         converted=1
     fi
@@ -88,3 +94,6 @@ if [ "$converted" = 1 ]; then
 else
     die "Conversion failed"
 fi
+
+timestamp "Opening image: $png"
+"$srcdir/imageopen.sh" "$png"

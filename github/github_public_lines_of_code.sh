@@ -64,12 +64,14 @@ num_github_repo_urls="$(wc -l <<< "$github_repo_urls" | sed 's/[[:space:]]*//g')
 timestamp "Found $num_github_repo_urls GitHub repos"
 echo
 
-tmp="/tmp/github-checkouts"
+# not using /tmp and mktemp because want to cache long term for performance
+# and clean checkouts are useful for all sorts of things and will be reused by other scripts
+basedir="$HOME/github/clean_checkouts"
 
-mkdir -p -v "$tmp"
+mkdir -p -v "$basedir"
 
-timestamp "Switching to dir: $tmp"
-cd "$tmp"
+timestamp "Switching to dir: $basedir"
+cd "$basedir"
 echo
 
 timestamp "Checking out all public original GitHub repos"
@@ -89,7 +91,15 @@ while read -r github_repo_url; do
 done <<< "$github_repo_urls"
 timestamp "Cloning done"
 echo
-
+echo
 timestamp "Counting lines of code:"
 echo
+echo
+timestamp "Cloc:"
+echo
 cloc .
+echo
+echo
+timestamp "Scc:"
+echo
+scc .
